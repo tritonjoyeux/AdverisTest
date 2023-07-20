@@ -1,4 +1,4 @@
-import { Animated, Image, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Animated, Image, Pressable, Text, TextInput, View } from 'react-native';
 import { useState, useRef } from 'react';
 import styles from './HomeStyle';
 import { useFonts } from 'expo-font';
@@ -32,6 +32,7 @@ export default function Home({ navigation }: {navigation: any}) {
 
 	let [colors, setColors] = useState([0, 1, 2, 0, 3, 1])
 	let [search, setSearch] = useState('')
+	let [loading, setLoading] = useState(false)
 
 	const [fontsLoaded] = useFonts({
 		'GoogleFontBold': require('../../../assets/fonts/product-sans-bold.ttf'),
@@ -67,7 +68,9 @@ export default function Home({ navigation }: {navigation: any}) {
 			</View>
 			<View style={styles.buttonsContainer}>
 				<Pressable style={styles.button} onPress={() => {
+					setLoading(true)
 					searchQuery(search).then((response: any) => {
+						setLoading(false)
 						navigation.navigate('Result', {title: `Résultats(${response.total})`, response})
 					})
 				}}>
@@ -97,6 +100,11 @@ export default function Home({ navigation }: {navigation: any}) {
 					<Text style={styles.textButton}>J'ai de la chance</Text>
 				</Pressable>
 			</View>
+			{loading && 
+				<View style={styles.loader}>
+					<ActivityIndicator size="large" />
+				</View>
+			}
 		</View>
  	);
 }

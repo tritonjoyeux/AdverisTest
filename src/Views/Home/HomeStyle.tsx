@@ -50,6 +50,17 @@ export default StyleSheet.create({
     },
     textButton: {
         fontSize: 10
+    },
+    loader: {
+        position: 'absolute',
+        backgroundColor: '#888888',
+        flex: 1,
+        width: '100%',
+        opacity: 0.5,
+        bottom: 0,
+        top: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });
   
