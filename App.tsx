@@ -9,8 +9,12 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Result" component={Result} />
+        <Stack.Screen name="Home" component={Home} options={{headerShown:false}} />
+        <Stack.Screen 
+          name="Result"
+          component={Result}
+          options={({route}: {route:{params?:{title?:string}}}) => ({title: route.params ? route.params?.title : 'Résultats'})}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

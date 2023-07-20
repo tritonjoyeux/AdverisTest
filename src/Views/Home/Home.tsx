@@ -2,6 +2,7 @@ import { Image, Pressable, Text, TextInput, View } from 'react-native';
 import { useState } from 'react';
 import styles from './HomeStyle';
 import { useFonts } from 'expo-font';
+import searchQuery from '../../Services/apiClient';
 
 const defaultColors = [
 	'#4285F4', //blue
@@ -10,13 +11,13 @@ const defaultColors = [
 	'#0F9D58'  //green
 ];
 
-export default function Home() {
+export default function Home({ navigation }: {navigation: any}) {
 	let [colors, setColors] = useState([0, 1, 2, 0, 3, 1])
 	let [search, setSearch] = useState('')
 
 	const [fontsLoaded] = useFonts({
-    'GoogleFontBold': require('../../../assets/fonts/product-sans-bold.ttf'),
-    'GoogleFont': require('../../../assets/fonts/product-sans-regular.ttf'),
+		'GoogleFontBold': require('../../../assets/fonts/product-sans-bold.ttf'),
+		'GoogleFont': require('../../../assets/fonts/product-sans-regular.ttf'),
 	});
 
   if (!fontsLoaded) {
@@ -47,7 +48,11 @@ export default function Home() {
 				</View>
 			</View>
 			<View style={styles.buttonsContainer}>
-				<Pressable style={styles.button} onPress={() => {}}>
+				<Pressable style={styles.button} onPress={() => {
+					searchQuery(search).then((response: any) => {
+						navigation.navigate('Result', {title: `Résultats(${response.total})`, response})
+					})
+				}}>
 					<Text style={styles.textButton}>Recherche Google</Text>
 				</Pressable>
 				<Pressable style={styles.button} onPress={() => {
