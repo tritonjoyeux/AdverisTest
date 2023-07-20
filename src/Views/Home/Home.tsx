@@ -1,5 +1,5 @@
-import { Image, Pressable, Text, TextInput, View } from 'react-native';
-import { useState } from 'react';
+import { Animated, Image, Pressable, Text, TextInput, View } from 'react-native';
+import { useState, useRef } from 'react';
 import styles from './HomeStyle';
 import { useFonts } from 'expo-font';
 import searchQuery from '../../Services/apiClient';
@@ -12,6 +12,24 @@ const defaultColors = [
 ];
 
 export default function Home({ navigation }: {navigation: any}) {
+	const fade = useRef(new Animated.Value(1)).current;
+
+	const fadeIn = () => {
+    Animated.timing(fade, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const fadeOut = () => {
+    Animated.timing(fade, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+
 	let [colors, setColors] = useState([0, 1, 2, 0, 3, 1])
 	let [search, setSearch] = useState('')
 
@@ -20,13 +38,13 @@ export default function Home({ navigation }: {navigation: any}) {
 		'GoogleFont': require('../../../assets/fonts/product-sans-regular.ttf'),
 	});
 
-  if (!fontsLoaded) {
-    return null;
-  }
+	if (!fontsLoaded) {
+		return null;
+	}
 
-  return (
+ 	return (
 		<View style={styles.container}>
-			<View style={styles.title}>
+			<Animated.View style={[{opacity: fade}, styles.title]}>
 				{
 					'Google'.split('').map((el, index) => {
 						return <Text key={index} style={[
@@ -36,7 +54,7 @@ export default function Home({ navigation }: {navigation: any}) {
 						}>{el}</Text> 
 					})
 				}
-			</View>
+			</Animated.View>
 			<View style={styles.inputContainer}>
 				<View style={styles.inputContent}>
 					<Image source={require('../../../assets/search.png')} style={styles.imageSearch} />
@@ -56,16 +74,30 @@ export default function Home({ navigation }: {navigation: any}) {
 					<Text style={styles.textButton}>Recherche Google</Text>
 				</Pressable>
 				<Pressable style={styles.button} onPress={() => {
-						let newColors: number[] = []
-						colors.forEach((_, index) => {
-							newColors[index] = Math.floor(Math.random() * 4)
-						})
-						setColors([...newColors])
+						fadeOut()
+						setTimeout(() => {
+							let newColors: number[] = []
+							colors.forEach((_, index) => {
+								let lastColor = newColors[index-1]
+								let randomColor = Math.floor(Math.random() * 4)
+								if(lastColor && lastColor >= 0) {
+									console.log(lastColor, randomColor)
+									while(lastColor === randomColor) {
+										randomColor = Math.floor(Math.random() * 4)
+									}
+								}
+								lastColor = randomColor
+								newColors[index] = randomColor
+							})
+							setColors([...newColors])
+							fadeIn()
+						}, 500)
+						
 					}}>
 					<Text style={styles.textButton}>J'ai de la chance</Text>
 				</Pressable>
 			</View>
 		</View>
-  );
+ 	);
 }
 
